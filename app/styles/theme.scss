@@ -1,0 +1,26 @@
+@import '../../node_modules/@angular/material/theming';
+
+@include mat-core();
+
+:root
+{
+  $dark-primary: mat-palette($mat-deep-orange, 700, 500, 900);
+  $dark-accent:  mat-palette($mat-teal, A400, A200, A700);
+  $dark-warn:    mat-palette($mat-yellow);
+  
+  $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+  
+  // Create variables and standard classes like .accent-fg
+  --primary: map-get($mat-deep-orange, 700);
+  --accent: map-get($mat-teal, A400);
+  --warn: map-get($mat-yellow, 500);
+  
+  $vars: ( primary, accent, warn );
+  
+  @each $var in $vars {
+    .#{$var}-fg { color: var(--#{$var}); }
+    .#{$var}-bg { background: var(--#{$var}); }
+  }
+  
+  @include angular-material-theme($dark-theme);
+}

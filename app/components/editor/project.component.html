@@ -1,0 +1,86 @@
+<mat-toolbar color="accent" class="p-5">
+	Resources
+</mat-toolbar>
+
+<div class="ml-10 mb-10">
+	<cvr-list-view [items]="videoResources" [(selectedItem)]="inspectedItem" [contextMenu]="videoResourcesContextMenu">
+		<ng-template #itemTemplate let-video>
+			<span class="material-icons inline">movie</span>
+			<span title="{{ video.timestamp }}">{{ video.name }}</span>
+		</ng-template>
+	</cvr-list-view>
+
+	<button mat-raised-button (click)="videoUpload()">
+		<mat-icon>file_upload</mat-icon>
+		Upload Video
+	</button>
+</div>
+
+<mat-toolbar color="accent">
+	Project
+</mat-toolbar>
+
+<mat-toolbar>
+	Scenes
+</mat-toolbar>
+
+<div class="ml-10 mb-10">
+	<cvr-list-view [items]="project.scenes" [trackBy]="id" [(selectedItem)]="inspectedItem" [contextMenu]="project.scenesContextMenu">
+		<ng-template #itemTemplate let-scene>
+			<div (dblclick)="renameScene(scene)">{{ scene.name }}</div>
+		</ng-template>
+		<ng-template #detailsTemplate let-scene>
+			<div class="ml-10">
+				<cvr-list-view [items]="scene.buttons" [trackBy]="id" [(selectedItem)]="inspectedItem" [contextMenu]="scene.buttonsContextMenu">
+					<ng-template #itemTemplate let-button>
+						{{ button.name }}
+					</ng-template>
+				</cvr-list-view>
+
+				<button mat-raised-button (click)="inspectedItem = scene.buttonAdd()">
+					<mat-icon>add</mat-icon>
+					Add Button
+				</button>
+			</div>
+		</ng-template>
+	</cvr-list-view>
+
+	<button mat-raised-button (click)="inspectedItem = project.sceneAdd()">
+		<mat-icon>add</mat-icon>
+		Add Scene
+	</button>
+</div>
+
+<mat-toolbar>
+	Affordances
+</mat-toolbar>
+
+<div class="ml-10 mb-10">
+	<cvr-list-view [items]="project.affordances" [trackBy]="id" [(selectedItem)]="inspectedItem" [contextMenu]="project.affordancesContextMenu"
+		[dragSortingEnabled]="true" [dropZones]="['affordances']">
+		<ng-template #itemTemplate let-affordance>
+			<span (click)="$event.stopPropagation()">
+				<mat-checkbox [(ngModel)]="affordance.enabled"></mat-checkbox>
+			</span>
+			<span>{{ affordance.name }}</span>
+		</ng-template>
+	</cvr-list-view>
+
+	<button mat-raised-button (click)="affordanceAdd()">
+		<mat-icon>add</mat-icon>
+		Add Affordance
+	</button>
+</div>
+
+<mat-toolbar>
+	Settings
+</mat-toolbar>
+
+<div class="ml-10 mb-10">
+	<cvr-list-view [items]="project.settings" [trackBy]="id" [(selectedItem)]="inspectedItem" [contextMenu]="project.settingsContextMenu"
+		[dragSortingEnabled]="true" [dropZones]="['settings']">
+		<ng-template #itemTemplate let-settings>
+			<span>{{ settings.name }}</span>
+		</ng-template>
+	</cvr-list-view>
+</div>

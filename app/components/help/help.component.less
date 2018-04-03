@@ -1,0 +1,91 @@
+p > mat-icon
+{
+	vertical-align: middle;
+}
+
+.key
+{
+	padding: 3px;
+	border: 2px solid currentColor;
+}
+.prop-list
+{
+	padding: 10px;
+	display: grid;
+	align-items: center;
+	grid-template-columns: max-content auto;
+	grid-auto-rows: auto;
+	grid-column-gap: var(--grid-column-gap);
+	grid-row-gap: var(--grid-row-gap);
+
+	&::before
+	{
+		content: "Properties";
+		opacity: 0.75;
+		font-weight: bold;
+		grid-column: span 2;
+	}
+
+	.prop::after
+	{
+		content: ":";
+	}
+}
+.prop
+{
+	color: var(--accent);
+	font-family: monospace;
+	font-weight: lighter;
+}
+
+.hud::after
+{
+	content: "HUD";
+}
+.sphere::after
+{
+	content: "Sphere"
+}
+
+.hud::after, .sphere::after
+{
+	background: var(--accent);
+	color: var(--default-background);
+	font-size: small;
+	padding: 3px;
+	border-radius: 3px;
+}
+
+section
+{
+	& > h1,
+	& > h2,
+	& > h3,
+	& > h4,
+	& > h5,
+	& > h6
+	{
+		& ~ *
+		{
+			margin-left: 5px;
+		}
+	}
+}
+
+h1
+{
+	font-size: 1.5em;
+}
+h2
+{
+	font-size: 1.25em;
+}
+h3
+{
+	font-size: 1.1em;
+}
+h4
+{
+	font-size: 1em;
+	font-variant: small-caps;
+}

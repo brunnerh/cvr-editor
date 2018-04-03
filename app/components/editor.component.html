@@ -1,0 +1,104 @@
+<div #root class="root maximize compact"
+	[class.fullscreen]="isFullscreen">
+	<!-- Menu -->
+	<mat-toolbar color="primary" class="header menu-bar mat-elevation-z6 z-2 flex-container center-items">
+		<div class="flex-constant">CVR Editor</div>
+		<div class="flex-star flex-container center-items" style="margin-left: 10px">
+			<button mat-button *ngFor="let menuItem of mainMenu"
+				[matMenuTriggerFor]="subMenu">
+				{{ menuItem.label }}
+				<mat-menu #subMenu="matMenu">
+					<cvr-menu-item *ngFor="let child of menuItem.children" [item]="child"></cvr-menu-item>
+				</mat-menu>
+			</button>
+		</div>
+		<div class="flex-constant">
+			<button mat-icon-button (click)="toggleFullscreen()">
+				<mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+			</button>
+		</div>
+	</mat-toolbar>
+
+	<!-- Resources/Project -->
+	<div class="left flex-container stretch-items mat-elevation-z3 z-1"
+		style="max-width: 20vw; overflow-y: auto"
+		[class.hidden]="view.projectSidebar == false">
+		<cvr-editor-project #projectComponent [project]="project" class="maximize"></cvr-editor-project>
+	</div>
+
+	<!-- Video -->
+	<div class="middle flex-container column stretch-items z-0">
+		<div class="flex-constant">
+			<div class="flex-container center-items" style="justify-content: center">
+				<mat-button-toggle-group [(value)]="mode" class="mat-elevation-z3">
+					<mat-button-toggle value="editor">
+						<mat-icon>mode_edit</mat-icon>
+					</mat-button-toggle>
+					<mat-button-toggle value="viewer">
+						<mat-icon>play_arrow</mat-icon>
+					</mat-button-toggle>
+				</mat-button-toggle-group>
+			</div>
+		</div>
+		<div class="flex-star flex-container stretch-items"
+			[ngSwitch]="mode">
+			<ng-container *ngSwitchCase="'editor'"
+							[ngSwitch]="projectComponent.detailsItem?.detailsType">
+				<!-- Scene editor -->
+				<ng-container *ngSwitchCase="'scene'">
+					<cvr-editor-scene-editor class="flex-star flex-container stretch-items"
+						[parent]="this"
+						[scene]="projectComponent.currentScene"
+						[(currentItem)]="projectComponent.inspectedItem"
+						[video]="video">
+					</cvr-editor-scene-editor>
+				</ng-container>
+
+				<!-- Video resource viewer -->
+				<ng-container *ngSwitchCase="'resource'">
+					<!-- TODO video viewer extends vertical size of editor beyond allotted size in Firefox -->
+					<cvr-utility-video-proxy [video]="video" class="flex-star"></cvr-utility-video-proxy>
+				</ng-container>
+
+				<!-- Affordance editor -->
+				<ng-container *ngSwitchCase="'affordance'">
+					<!-- TODO affordance editor should show sample output on canvas -->
+					<div class="flex-star flex-container center-items">
+						<div class="flex-star" style="text-align: center">[ See properties and edit them while in view mode. ]</div>
+					</div>
+				</ng-container>
+
+				<!-- Settings editor -->
+				<ng-container *ngSwitchCase="'settings'">
+					<div class="flex-star flex-container center-items">
+						<div class="flex-star" style="text-align: center">[ See properties and edit them while in view mode. ]</div>
+					</div>
+				</ng-container>
+			</ng-container>
+
+			<ng-container *ngSwitchCase="'viewer'">
+				<cvr-editor-viewer class="flex-star flex-container stretch-items"
+					[project]="projectComponent.project"
+					[currentScene]="projectComponent.currentScene">
+				</cvr-editor-viewer>
+			</ng-container>
+		</div>
+	</div>
+
+	<!-- Properties -->
+	<div class="right flex-container stretch-items mat-elevation-z3 z-1"
+		style="max-width: 20vw; overflow-y: auto"
+		[class.hidden]="view.propertiesSidebar == false">
+		<cvr-editor-properties [item]="projectComponent.inspectedItem"></cvr-editor-properties>
+	</div>
+
+	<cvr-editor-timeline class="footer"
+		[video]="video"
+		[class.hidden]="view.timeline == false">
+	</cvr-editor-timeline>
+
+	<video #video
+		class="hidden"
+		[src]="projectComponent.videoSrc">
+	</video>
+</div>

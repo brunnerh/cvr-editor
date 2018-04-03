@@ -1,0 +1,273 @@
+<div>
+	<section>
+		<h1>Basics</h1>
+
+		<p>
+			This application can be used to set up interactive cinematic VR experiences. A project consists of a variable number of scenes
+			which contain interactive buttons. Each scene is associated with a video, which should be an equirectangular projection
+			of a sphere. The video may be stereoscopic (stacked either vertically or horizontally).
+		</p>
+
+		<section>
+			<h2>Resources</h2>
+
+			In the resources section videos can be uploaded, selected for editing or deleted. Videos are stored on the application server
+			and are not linked with the project. Due to the large size of videos it would create a significant overhead to always
+			transfer them upon loading or saving.
+		</section>
+
+		<section>
+			<h2>Project</h2>
+
+			<p>
+				The project section displays the current project tree, consisting of scenes and their buttons, affordances and settings.
+				Objects can be added or removed as necessary.
+			</p>
+			<p>
+				When a project is saved using "Save" from the file menu, it is stored in the browser. Use "Save As" to store it as a file
+				on disk.
+			</p>
+		</section>
+
+		<section>
+			<h2>Properties</h2>
+
+			In the properties sidebar the selected item can be inspected and edited. The types of properties that are available depends
+			on the selected item. Most items have a name which determines how they are displayed in the project tree.
+		</section>
+
+		<section>
+			<h2>Modes</h2>
+
+			<p>
+				In the middle section of the editor there are two buttons that change the mode of the editor. In edit mode (
+				<mat-icon>mode_edit</mat-icon>) scenes are displayed on a plane and scene elements can be manipulated. In view mode (
+				<mat-icon>play_arrow</mat-icon>) the scene is displayed in a 360-degree environment.
+			</p>
+		</section>
+	</section>
+
+	<section>
+		<h1>Scene Editor</h1>
+
+		<p>
+			In the scene editor (available in edit mode when a scene or one of its elements is selected) elements belonging to a scene
+			can be manipulated.
+		</p>
+
+		<section>
+			<h2>Buttons</h2>
+
+			<p>
+				Buttons can be positioned by clicking and dragging them. To resize a button, hold
+				<span class="key">Shift</span> while dragging it. To select a button, double click it.
+			</p>
+		</section>
+	</section>
+
+	<section>
+		<h1>Affordances</h1>
+
+		<p>
+			In the context of this application an affordance is something that communicates interactivity or interaction opportunities
+			to the user. Affordances are global to the project and affect how scenes are rendered in the viewer.
+		</p>
+		<p>
+			The checkbox next to an affordance in the project explorer can be used to quickly enable or disable a given affordance. This
+			has the same effect as changing the
+			<span class="prop">Enabled</span> property in the properties editor.
+		</p>
+		<p>
+			The order in which the affordances are applied matters. Affordances are applied top to bottom and their order can be changed
+			by dragging the items in the list.
+		</p>
+
+		<section>
+			<h2>Types</h2>
+
+			<p>There are various types of affordances that can be added to a project. This section lists and explains them.</p>
+
+			<p>
+				The viewer has two primary parts: The video sphere and an orthographic HUD on top of that. Affordances are labeled accordingly
+				to indicate which layers are affected. Affordances that are rendered to the sphere tend to move around as the camera
+				changes while those on the HUD are more static.
+			</p>
+
+			<section>
+				<h3>Cursor
+					<span class="hud"></span>
+				</h3>
+
+				<p>
+					This renders a cursor in the middle of the screen in the shape of a ring.
+				</p>
+
+				<div class="prop-list">
+					<div class="prop">Radius Factor</div>
+					<div>
+						Radius of cursor circle as factor of the HUD width.
+					</div>
+
+					<div class="prop">Line Width Factor</div>
+					<div>
+						Line width of cursor circle as factor of the HUD width.
+					</div>
+
+					<div class="prop">Opacity Default</div>
+					<div>
+						Opacity when not hovering a button.
+					</div>
+
+					<div class="prop">Opacity Hover</div>
+					<div>
+						Opacity when hovering a button.
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<h3>Shapes
+					<span class="sphere"></span>
+				</h3>
+
+				<p>
+					This simply renders the shapes of buttons, so the user can clearly see which areas are interactive.
+				</p>
+				<div class="prop-list">
+					<div class="prop">Fill Opacity Default</div>
+					<div>
+						Fill opacity when not hovering the button.
+					</div>
+
+					<div class="prop">Fill Opacity Hover</div>
+					<div>
+						Fill opacity when hovering the button.
+					</div>
+
+					<div class="prop">Border Thickness Factor</div>
+					<div>
+						Border thickness of button as factor of sphere circumference.
+					</div>
+
+					<div class="prop">Border Opacity Default</div>
+					<div>
+						Border opacity when not hovering the button.
+					</div>
+
+					<div class="prop">Border Opacity Hover</div>
+					<div>
+						Border opacity when hovering the button.
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<h3>Lines
+					<span class="sphere"></span>
+				</h3>
+
+				<p>
+					This renders lines from the center of the screen to buttons.
+				</p>
+
+				<div class="prop-list">
+					<div class="prop">Line Width Factor</div>
+					<div>
+						Line width of cursor circle as factor of sphere circumference.
+					</div>
+
+					<div class="prop">Line Segments</div>
+					<div>
+						The number of line segments used to approximate the lines to the elements.
+					</div>
+
+					<div class="prop">Range</div>
+					<div>
+						How far the lines are drawn in percent (0 to 1). '1' means they are drawn completely from element to the screen center.
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<h3>Edge Indicators
+					<span class="hud"></span>
+				</h3>
+
+				<p>
+					This renders a circle of varying radius and opacity at the viewport edge indicating off-screen elements.
+				</p>
+
+				<div class="prop-list">
+					<div class="prop">Radius Factor</div>
+					<div>
+						Radius of indicator as factor of screen width.
+					</div>
+
+					<div class="prop">Radius Dyn. Factor</div>
+					<div>
+						Factor of dynamic change of the indicator radius based on distance.
+					</div>
+
+					<div class="prop">Opacity Max.</div>
+					<div>
+						Maximum opacity of indicators based on distance.
+					</div>
+
+					<div class="prop">Opacity Min.</div>
+					<div>
+						Minimum opacity of indicators based on distance.
+					</div>
+
+					<div class="prop">Trace Segments</div>
+					<div>
+						The number of line segments used to approximate the path to the elements which is used to find the screen edge intersection
+						point.
+					</div>
+
+					<div class="prop">Draw Trace</div>
+					<div>
+						Whether to draw the trace line.
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<h3>Halos
+					<span class="sphere"></span>
+				</h3>
+
+				<p>
+					This renders a circle of varying radius around off-screen elements.
+				</p>
+
+				<div class="prop-list">
+					<div class="prop">Line Width Factor</div>
+					<div>
+						Line width of halo circle as factor of screen width.
+					</div>
+
+					<div class="prop">Radius Factor</div>
+					<div>
+						Radius of halo circle as factor of screen width.
+					</div>
+
+					<div class="prop">Samples</div>
+					<div>
+						The number of sample points used to approximate the halo. If the halo does not wrap correctly on the horizontal seam, increasing the sample size can help.
+					</div>
+
+					<div class="prop">Opacity Min.</div>
+					<div>
+						Minimum opacity of indicators based on distance.
+					</div>
+
+					<div class="prop">Trace Segments</div>
+					<div>
+						The number of line segments used to approximate the path to the elements which is used to find the screen edge intersection
+						point.
+					</div>
+				</div>
+			</section>
+		</section>
+	</section>
+</div>

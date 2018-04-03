@@ -1,0 +1,43 @@
+.root
+{
+	background-color: var(--default-background);
+	color: var(--default-color);
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	grid-template-rows: auto 1fr auto;
+	grid-template-areas:
+		"header header header"
+		"left middle right"
+		"footer footer footer";
+}
+.header
+{
+	grid-area: header;
+}
+.footer
+{
+	grid-area: footer;
+}
+.left
+{
+	grid-area: left;
+}
+.middle
+{
+	grid-area: middle;
+}
+.right
+{
+	grid-area: right;
+}
+
+@media screen and ( max-height: 600px )
+{
+	.root.fullscreen
+	{
+		.menu-bar
+		{
+			display: none;
+		}
+	}
+}

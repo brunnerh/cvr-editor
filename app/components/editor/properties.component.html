@@ -1,0 +1,32 @@
+<mat-toolbar *ngIf="showHeader"
+	color="accent">
+	Properties
+</mat-toolbar>
+
+<div *ngIf="properties.length > 0"
+	class="properties-list p-5">
+	<ng-container *ngFor="let property of properties">
+		<ng-container *ngIf="property.label != null">
+			<div [attr.title]="property.options.tooltip">
+				{{ property.label }}:
+			</div>
+			<ng-container *ngIf="property.options.fullRow == false" [inject-component]="property.editorFactory"></ng-container>
+			<ng-container *ngIf="property.options.fullRow == true">
+				<div><!-- Fill cell --></div>
+				<div style="grid-column: span 2">
+					<ng-container [inject-component]="property.editorFactory"></ng-container>
+				</div>
+			</ng-container>
+		</ng-container>
+
+		<ng-container *ngIf="property.label == null">
+			<div style="grid-column: span 2">
+				<ng-container [inject-component]="property.editorFactory"></ng-container>
+			</div>
+		</ng-container>
+	</ng-container>
+</div>
+
+<div *ngIf="properties.length == 0" class="m-10">
+	[ No properties to list. ]
+</div>

@@ -1,0 +1,46 @@
+.cvr-list-view
+{
+	margin: 5px;
+
+	.cvr-list-item
+	{
+		margin: 3px;
+		padding: 0;
+		background: transparent;
+		user-select: none;
+
+		.cvr-list-item-content
+		{
+			transition: all var(--animation-easing) var(--animation-speed);
+
+			&.selected
+			{
+				color: var(--accent);
+			}
+		}
+
+		&:hover, &:focus
+		{
+			// Not implemented anywhere
+			background: ~"color-mod(var(--accent) alpha(0.2))";
+		}
+
+		.menu-button
+		{
+			background: transparent;
+			color: var(--default-color);
+			padding: 0;
+			margin: 0;
+			margin-left: 10px;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			transition: all var(--animation-easing) var(--animation-speed);
+
+			&:hover, &:focus
+			{
+				color: var(--accent);
+			}
+		}
+	}
+}

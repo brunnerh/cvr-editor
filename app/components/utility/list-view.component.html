@@ -1,0 +1,30 @@
+<div class="cvr-list-view" dnd-sortable-container [sortableData]="items"
+	[dropZones]="dropZones">
+	<div class="cvr-list-item flex-container column stretch-items"
+			*ngFor="let item of items; index as i; trackBy: trackBy"
+			dnd-sortable [sortableIndex]="i" [dragEnabled]="dragSortingEnabled">
+		<!-- Item template and menu -->
+		<div class="flex-container stretch-items">
+			<div class="cvr-list-item-content flex-star clickable flex-container center-items"
+				(click)="selectedItem = item"
+				[class.selected]="selectedItem == item">
+				<!-- Render item template if present -->
+				<cvr-content-presenter *ngIf="itemTemplate" [content]="item" [template]="itemTemplate"></cvr-content-presenter>
+				<!-- Otherwise implicitly convert object to string -->
+				<div *ngIf="!itemTemplate">
+					{{ item }}
+				</div>
+			</div>
+			<div class="flex-constant" *ngIf="contextMenu != null">
+				<button class="menu-button" [matMenuTriggerFor]="matContextMenu">
+					<span class="material-icons">more_horiz</span>
+				</button>
+				<mat-menu #matContextMenu="matMenu">
+					<cvr-menu-item *ngFor="let menuItem of contextMenu" [item]="menuItem" [args]="item"></cvr-menu-item>
+				</mat-menu>
+			</div>
+		</div>
+		<!-- Details template -->
+		<cvr-content-presenter *ngIf="detailsTemplate" [content]="item" [template]="detailsTemplate"></cvr-content-presenter>
+	</div>
+</div>

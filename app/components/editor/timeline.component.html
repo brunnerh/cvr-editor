@@ -1,0 +1,12 @@
+<div class="flex-constant flex-container center-items">
+	<button mat-icon-button class="flex-constant" [disabled]="!video.duration"
+		color="accent"
+		(click)="video.paused ? video.play() : video.pause()">
+		<mat-icon>{{ video.paused ? 'play_arrow' : 'pause' }}</mat-icon>
+	</button>
+	<mat-slider class="flex-star" [disabled]="!video.duration"
+		min="0" [max]="video.duration" [step]="0.01"
+		[value]="video.currentTime" (input)="video.currentTime = $event.value">
+	</mat-slider>
+	<div class="m-10">{{ video.currentTime | number:'1.2-2' }} s </div>
+</div>

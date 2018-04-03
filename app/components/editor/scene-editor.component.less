@@ -1,0 +1,21 @@
+.center-area
+{
+	background: black;
+}
+.center-area-canvas
+{
+	background: #222;
+}
+
+// Scroll via drag does not work as intended on mobile, so native scrolling is retained here.
+.mouse-scroll
+{
+	overflow: scroll;
+}
+
+@media (pointer: fine) {
+	.mouse-scroll
+	{
+		overflow: hidden
+	}
+}

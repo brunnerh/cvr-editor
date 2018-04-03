@@ -1,0 +1,87 @@
+<div #scrollContainer
+	class="center-area flex-star relative mouse-scroll">
+	<div #canvas class="center-area-canvas will-scroll relative no-select" style="height: 300%; width: 300%"
+		(pointerdown) = "canvasPointerDown($event)"
+		(pointerup)   = "canvasPointerUp($event)"
+		(pointermove) = "canvasPointerMove($event)"
+		(mousewheel)  = "canvasMouseWheel($event)">
+		<div #sceneContainer class="absolute center" style="height: 33%; width: 33%">
+			<div class="aspect-ratio-box center" [style.padding-top.%]="sceneAspectRatio">
+				<canvas #videoLayer
+					[width]="canvasSize.width"
+					[height]="canvasSize.height">
+				</canvas>
+				<svg [attr.width]="canvasSize.width"
+					[attr.height]="canvasSize.height"
+					[attr.viewBox]="svgViewBox"
+					[style.cursor]="draggingShape == null ? 'unset' : 'none'">
+					<style>
+						.button
+						{
+							fill-opacity: 0.5;
+
+							fill: var(--primary);
+							stroke: var(--primary);
+							cursor: move;
+
+							transition: fill-opacity var(--animation-easing) var(--animation-speed),
+								fill var(--animation-easing) var(--animation-speed),
+								stroke var(--animation-easing) var(--animation-speed);
+						}
+						.button.inactive
+						{
+							fill-opacity: 0.25;
+						}
+						.button.modShift
+						{
+							cursor: nwse-resize;
+						}
+						.button.selected
+						{
+							fill: var(--accent);
+							stroke: var(--accent);
+						}
+						.button.captured
+						{
+							cursor: none;
+						}
+						.button:hover, .button.captured
+						{
+							fill-opacity: 0.8;
+						}
+						.vertex
+						{
+							fill: white;
+							stroke: none;
+							fill-opacity: 1;
+						}
+					</style>
+					<ng-container *ngFor="let button of scene.buttons">
+						<g *ngFor="let shape of button.shapes; trackBy: trackByIndex"
+							class="button"
+							[class.modShift]="inputState.keyboard.Shift"
+							[class.selected]="currentItem == button"
+							[class.captured]="draggingShape == shape"
+							[class.inactive]="shape.isActive(video.currentTime) == false"
+							(pointerdown) = "shapePointerDown(shape, $event)"
+							(pointerup)   = "shapePointerUp(shape, $event)"
+							(pointermove) = "shapePointerMove(shape, $event)"
+							(touchmove)   = "shapeTouchMove(shape, $event)"
+							(dblclick)    = "currentItem = button">
+							<ng-container *ngFor="let points of calculateShapePoints(shape); trackBy: trackByIndex">
+								<path [attr.d]="createPathData(points)"/>
+								<ng-container *ngIf="parent.view.samples">
+									<circle *ngFor="let p of points"
+										class="vertex"
+										[attr.cx]="p.x"
+										[attr.cy]="p.y"
+										r="2"/>
+								</ng-container>
+							</ng-container>
+						</g>
+					</ng-container>
+				</svg>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,47 @@
+.compact
+{
+	--compact-font-size: 12px;
+	--compact-height: ~'calc(var(--compact-font-size) + 10px)';
+	--compact-line-height: ~'calc(var(--compact-font-size) + 5px)';
+
+	font-size: var(--compact-font-size);
+
+	.mat-expansion-panel-body
+	{
+		padding: 0 5px 5px 5px;
+	}
+
+	.mat-list .mat-list-item,
+	.mat-list .mat-list-option,
+	.mat-nav-list .mat-list-item,
+	.mat-nav-list .mat-list-option,
+	.mat-selection-list .mat-list-item,
+	.mat-selection-list .mat-list-option
+	{
+		height: var(--compact-height);
+	}
+
+	.mat-toolbar-row, .mat-toolbar-single-row
+	{
+		font-size: ~'calc(var(--compact-font-size) + 4px)';
+		&[color='primary']
+		{
+			--compact-font-size: 14px;
+			height: ~'calc(var(--compact-height) + 1em)';
+		}
+		&:not([color='primary'])
+		{
+			height: ~'calc(var(--compact-height) + 0.5em)';
+		}
+	}
+
+	.mat-button,
+	.mat-fab,
+	.mat-icon-button,
+	.mat-mini-fab,
+	.mat-raised-button
+	{
+		font-size: var(--compact-font-size);
+		line-height: ~'calc(var(--compact-line-height) + 0.5em)';
+	}
+}
