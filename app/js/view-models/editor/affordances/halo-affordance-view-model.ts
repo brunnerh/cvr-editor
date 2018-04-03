@@ -1,23 +1,27 @@
 import { AffordanceViewModel, AffordanceLayers, AffordanceMetadata } from "./affordance-view-model";
 import { ButtonViewModel } from "../button-view-model";
-import { TextDisplayComponent, NumberEditorComponent } from "../../../../components/editor/property-editors";
+import { TextDisplayComponent, NumberEditorComponent, ColorEditorComponent, PEColorOptions, ColorEditorOptions } from "../../../../components/editor/property-editors";
 import { editorProperty } from "../../../../components/editor/properties.component";
 import { addToJSON } from "../../../utility/json";
 import { ProjectViewModel } from "../project-view-model";
 import { uvToLatLon, toVector3, worldToLatLon, planePointsCircle, Point } from "../../../utility/geometry";
 import config from "../../../../../config";
+import { copyOnDefined } from "../../../utility/object-utilities";
 
 export class HaloAffordanceViewModel extends AffordanceViewModel
 {
 	static deserialize(json: HaloAffordanceViewModel, project: ProjectViewModel): HaloAffordanceViewModel
 	{
 		const affordance = new HaloAffordanceViewModel(project);
-		affordance.name = json.name;
-		affordance.enabled = json.enabled;
-		affordance.lineWidthFactor = json.lineWidthFactor;
-		affordance.radiusFactor = json.radiusFactor;
-		affordance.traceSegments = json.traceSegments;
-		affordance.sampleRate = json.sampleRate;
+		copyOnDefined(json)(affordance)(
+			"name",
+			"enabled",
+			"lineWidthFactor",
+			"radiusFactor",
+			"traceSegments",
+			"sampleRate",
+			"colorOverride"
+		);
 
 		return affordance;
 	}
@@ -40,7 +44,7 @@ export class HaloAffordanceViewModel extends AffordanceViewModel
 		tooltip: "Radius of halo circle as factor of screen width."
 	})
 	radiusFactor = 0.01;
-	
+
 	@editorProperty("Samples", () => NumberEditorComponent, undefined, {
 		tooltip: "The number of sample points used to approximate the halo. If the halo does not wrap correctly on the horizontal seam, increasing the sample size can help."
 	})
@@ -50,6 +54,11 @@ export class HaloAffordanceViewModel extends AffordanceViewModel
 		tooltip: "The number of line segments used to approximate the path to the elements which is used to find the screen edge intersection point."
 	})
 	traceSegments = 100;
+	
+	@editorProperty("Custom Color", () => ColorEditorComponent, [{
+		provide: PEColorOptions, useValue: <ColorEditorOptions>{ nullable: true }
+	}], { tooltip: "Overrides the default cyan color of the halo."})
+	colorOverride: string | null = null;
 
 	constructor(project: ProjectViewModel)
 	{
@@ -64,6 +73,7 @@ export class HaloAffordanceViewModel extends AffordanceViewModel
 		const perspectiveFrustum = this.makeFrustum(metadata.cameras.perspective);
 
 		const cursorLatLon = uvToLatLon(metadata.cursor);
+		const color = this.colorOverride == null ? metadata.colors.secondary : this.colorOverride;
 		currentButtons.forEach(data =>
 		{
 			const btnCenter = data.button.getCenter(metadata.currentTime);
@@ -76,7 +86,7 @@ export class HaloAffordanceViewModel extends AffordanceViewModel
 			let btnWorld = this.toWorldPosition(btnCenter, layers.interaction.radius);
 			if (perspectiveFrustum.containsPoint(toVector3(btnWorld)))
 				return;
-			
+
 			// Calculate 3D path and intersect it with HUD frustum to find edge points to calculate the radius of the halo.
 			const path = this.planarSpherePath(cursorLatLon, btnLatLon, this.traceSegments, this.cutThreshold);
 			const intersection = this.intersectPathWithFrustum(perspectiveFrustum, path, layers);
@@ -92,7 +102,8 @@ export class HaloAffordanceViewModel extends AffordanceViewModel
 			const intersectionLatLon = worldToLatLon(intersection);
 			/** Distance from button to frustum. */
 			const distance = btnLatLon.distanceTo(intersectionLatLon, 1);
-			layers.interaction.draw((ctx, width, height) => {
+			layers.interaction.draw((ctx, width, height) =>
+			{
 				const radius = distance + this.radiusFactor;
 				const circle = { cx: btnCenter.u, cy: btnCenter.v, r: radius };
 				const paths = planePointsCircle(circle, this.sampleRate, this.cutThreshold);
@@ -104,7 +115,7 @@ export class HaloAffordanceViewModel extends AffordanceViewModel
 				{
 					ctx.save();
 					ctx.beginPath();
-					ctx.strokeStyle = metadata.colors.secondary + "88";
+					ctx.strokeStyle = color + "88";
 					ctx.lineWidth = width * this.lineWidthFactor;
 					path.forEach((p, i) =>
 					{
@@ -122,4 +133,8 @@ export class HaloAffordanceViewModel extends AffordanceViewModel
 	}
 }
 
-addToJSON(HaloAffordanceViewModel.prototype, "type", "name", "enabled", "lineWidthFactor", "radiusFactor", "sampleRate", "traceSegments");
+addToJSON(HaloAffordanceViewModel.prototype,
+	"type", "name", "enabled",
+	"lineWidthFactor", "radiusFactor", "sampleRate",
+	"traceSegments", "colorOverride"
+);

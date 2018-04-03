@@ -95,6 +95,8 @@
 	"scripts": {
 		"build:server": "pushd server && webpack && popd",
 		"build:client": "pushd app && webpack && popd",
+		"watch:server": "pushd server && webpack -w",
+		"watch:client": "pushd app && webpack -w",
 		"install": "npm run build:server && npm run build:client",
 		"start": "node server/server.js"
 	},

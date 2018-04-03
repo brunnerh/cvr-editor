@@ -50,3 +50,4 @@ When using a Chrome browser, you may need to toggle a development flag to enable
 
 - The algorithm for mapping the corners of rectangular button shapes is wrong. They can still be used but do not scale the way they should.
 - The *Halos* affordance has some bugs, as it was deemed too hard to interpret and too visually noisy to invest in any further.
+- Almost no tests at all.

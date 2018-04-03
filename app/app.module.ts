@@ -11,6 +11,15 @@ import { FormsModule } from '@angular/forms';
 // Other
 import { DndModule } from "ng2-dnd";
 
+const editors = [
+	ec.RecursiveEditorComponent, ec.ListEditorComponent,
+	ec.StringEditorComponent, ec.NumberEditorComponent,
+	ec.OptionsEditorComponent, ec.BooleanEditorComponent,
+	ec.ColorEditorComponent,
+	ec.MultiLineStringEditorComponent,
+	ec.TextDisplayComponent,
+];
+
 @NgModule({
 	imports: [
 		BrowserModule, BrowserAnimationsModule, FormsModule,
@@ -32,11 +41,7 @@ import { DndModule } from "ng2-dnd";
 		c.ProjectComponent, c.PropertiesComponent, c.TimelineComponent,
 		c.ViewerComponent, c.SceneEditorComponent,
 
-		ec.RecursiveEditorComponent, ec.ListEditorComponent,
-		ec.StringEditorComponent, ec.NumberEditorComponent,
-		ec.OptionsEditorComponent, ec.BooleanEditorComponent,
-		ec.MultiLineStringEditorComponent,
-		ec.TextDisplayComponent,
+		...editors,
 
 		c.InputConfigureComponent, c.ReadGamepadButtonComponent,
 		c.SelectOptionComponent,
@@ -70,11 +75,7 @@ import { DndModule } from "ng2-dnd";
 
 		c.HelpComponent, c.KeyboardShortcutsComponent,
 		
-		ec.RecursiveEditorComponent, ec.ListEditorComponent,
-		ec.StringEditorComponent, ec.NumberEditorComponent,
-		ec.OptionsEditorComponent, ec.BooleanEditorComponent,
-		ec.MultiLineStringEditorComponent,
-		ec.TextDisplayComponent
+		...editors,
 	]
 })
 export class AppModule

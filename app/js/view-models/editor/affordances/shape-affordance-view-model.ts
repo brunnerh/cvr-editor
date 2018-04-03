@@ -1,6 +1,6 @@
 import { AffordanceViewModel, AffordanceLayers, AffordanceMetadata } from "./affordance-view-model";
 import { ButtonViewModel } from "../button-view-model";
-import { TextDisplayComponent, NumberEditorComponent } from "../../../../components/editor/property-editors";
+import { TextDisplayComponent, NumberEditorComponent, ColorEditorComponent, PEColorOptions, ColorEditorOptions } from "../../../../components/editor/property-editors";
 import { editorProperty } from "../../../../components/editor/properties.component";
 import { addToJSON } from "../../../utility/json";
 import { ProjectViewModel } from "../project-view-model";
@@ -18,7 +18,8 @@ export class ShapeAffordanceViewModel extends AffordanceViewModel
 			"enabled",
 			"fillOpacityDefault", "fillOpacityHover",
 			"borderThicknessFactor",
-			"borderOpacityDefault", "borderOpacityHover"
+			"borderOpacityDefault", "borderOpacityHover",
+			"colorOverride", "colorOverrideHover"
 		);
 
 		return affordance;
@@ -54,6 +55,16 @@ export class ShapeAffordanceViewModel extends AffordanceViewModel
 	})
 	borderOpacityHover = 1;
 
+	@editorProperty("Custom Color", () => ColorEditorComponent, [{
+		provide: PEColorOptions, useValue: <ColorEditorOptions>{ nullable: true }
+	}], { tooltip: "Overrides the default orange color of the shapes."})
+	colorOverride: string | null = null;
+
+	@editorProperty("Custom Color Hover", () => ColorEditorComponent, [{
+		provide: PEColorOptions, useValue: <ColorEditorOptions>{ nullable: true }
+	}], { tooltip: "Overrides the default orange color of the shapes on hover."})
+	colorOverrideHover: string | null = null;
+
 	constructor(project: ProjectViewModel)
 	{
 		super(project);
@@ -74,6 +85,9 @@ export class ShapeAffordanceViewModel extends AffordanceViewModel
 			{
 				const button = data.button;
 				const hit = button.hits(metadata.cursor, metadata.currentTime);
+				const colorNonHover = this.colorOverride != null ? this.colorOverride : metadata.colors.primary;
+				const colorHover = this.colorOverrideHover != null ? this.colorOverrideHover : colorNonHover;
+				const color = hit ? colorHover : colorNonHover;
 				data.shapes.forEach(shape =>
 				{
 					const paths = shape.getPlanarGeometry();
@@ -82,8 +96,8 @@ export class ShapeAffordanceViewModel extends AffordanceViewModel
 						ctx.save();
 						ctx.beginPath();
 						ctx.lineWidth = this.borderThicknessFactor * width;
-						ctx.strokeStyle = metadata.colors.primary + this.hexString(hit ? this.borderOpacityHover : this.borderOpacityDefault);
-						ctx.fillStyle = metadata.colors.primary + this.hexString(hit ? this.fillOpacityHover : this.fillOpacityDefault);
+						ctx.strokeStyle = color + this.hexString(hit ? this.borderOpacityHover : this.borderOpacityDefault);
+						ctx.fillStyle = color + this.hexString(hit ? this.fillOpacityHover : this.fillOpacityDefault);
 						path.forEach((p, i) =>
 						{
 							const mapped = map(p);
@@ -112,4 +126,5 @@ addToJSON(ShapeAffordanceViewModel.prototype,
 	"fillOpacityDefault", "fillOpacityHover",
 	"borderThicknessFactor",
 	"borderOpacityDefault", "borderOpacityHover",
+	"colorOverride", "colorOverrideHover"
 );

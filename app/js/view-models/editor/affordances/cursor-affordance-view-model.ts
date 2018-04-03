@@ -1,6 +1,6 @@
 import { AffordanceViewModel, AffordanceLayers, AffordanceMetadata } from "./affordance-view-model";
 import { ButtonViewModel } from "../button-view-model";
-import { TextDisplayComponent, NumberEditorComponent } from "../../../../components/editor/property-editors";
+import { TextDisplayComponent, NumberEditorComponent, ColorEditorComponent, PEColorOptions, ColorEditorOptions } from "../../../../components/editor/property-editors";
 import { editorProperty } from "../../../../components/editor/properties.component";
 import { addToJSON } from "../../../utility/json";
 import { ProjectViewModel } from "../project-view-model";
@@ -17,8 +17,8 @@ export class CursorAffordanceViewModel extends AffordanceViewModel
 			"enabled",
 			"radiusFactor",
 			"lineWidthFactor",
-			"opacityDefault",
-			"opacityHover",
+			"opacityDefault", "opacityHover",
+			"colorOverride", "colorOverrideHover"
 		);
 
 		return affordance;
@@ -47,6 +47,16 @@ export class CursorAffordanceViewModel extends AffordanceViewModel
 		tooltip: "Opacity when hovering a button."
 	})
 	opacityHover = 1.0;
+	
+	@editorProperty("Custom Color", () => ColorEditorComponent, [{
+		provide: PEColorOptions, useValue: <ColorEditorOptions>{ nullable: true }
+	}], { tooltip: "Overrides the default white color of the cursor."})
+	colorOverride: string | null = null;
+
+	@editorProperty("Custom Color Hover", () => ColorEditorComponent, [{
+		provide: PEColorOptions, useValue: <ColorEditorOptions>{ nullable: true }
+	}], { tooltip: "Overrides the default white color of the cursor on hover."})
+	colorOverrideHover: string | null = null;
 
 	constructor(project: ProjectViewModel)
 	{
@@ -71,7 +81,12 @@ export class CursorAffordanceViewModel extends AffordanceViewModel
 	render(buttons: ButtonViewModel[], layers: AffordanceLayers, metadata: AffordanceMetadata)
 	{
 		const hit = buttons.filter(btn => btn.hits(metadata.cursor, metadata.currentTime))[0];
-		const style = "#ffffff" + this.hexString(hit != null ? this.opacityHover : this.opacityDefault);
+
+		const colorNonHover = this.colorOverride != null ? this.colorOverride : "#FFFFFF";
+		const colorHover = this.colorOverrideHover != null ? this.colorOverrideHover : colorNonHover;
+		const color = hit ? colorHover : colorNonHover;
+
+		const style = color + this.hexString(hit != null ? this.opacityHover : this.opacityDefault);
 		this.drawReticle(
 			layers.hud,
 			layers.hud.width * this.radiusFactor,
@@ -83,5 +98,8 @@ export class CursorAffordanceViewModel extends AffordanceViewModel
 
 addToJSON(
 	CursorAffordanceViewModel.prototype,
-	"type", "name", "enabled", "radiusFactor", "lineWidthFactor", "opacityDefault", "opacityHover"
+	"type", "name", "enabled",
+	"radiusFactor", "lineWidthFactor",
+	"opacityDefault", "opacityHover",
+	"colorOverride", "colorOverrideHover"
 );

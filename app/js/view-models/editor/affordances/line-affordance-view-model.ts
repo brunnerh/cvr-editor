@@ -1,11 +1,12 @@
 import { AffordanceViewModel, AffordanceLayers, AffordanceMetadata } from "./affordance-view-model";
 import { ButtonViewModel } from "../button-view-model";
-import { TextDisplayComponent, NumberEditorComponent } from "../../../../components/editor/property-editors";
+import { TextDisplayComponent, NumberEditorComponent, ColorEditorComponent, PEColorOptions, ColorEditorOptions } from "../../../../components/editor/property-editors";
 import { editorProperty } from "../../../../components/editor/properties.component";
 import { addToJSON } from "../../../utility/json";
 import { ProjectViewModel } from "../project-view-model";
 import { uvToLatLon, toVector3 } from "../../../utility/geometry";
 import { Frustum, Matrix4 } from "three";
+import { copyOnDefined } from "../../../utility/object-utilities";
 const colorutil = require("color-util");
 
 export class LineAffordanceViewModel extends AffordanceViewModel
@@ -13,11 +14,14 @@ export class LineAffordanceViewModel extends AffordanceViewModel
 	static deserialize(json: LineAffordanceViewModel, project: ProjectViewModel): LineAffordanceViewModel
 	{
 		const affordance = new LineAffordanceViewModel(project);
-		affordance.name = json.name;
-		affordance.enabled = json.enabled;
-		affordance.lineWidthFactor = json.lineWidthFactor;
-		affordance.lineSegments = json.lineSegments;
-		affordance.range = json.range;
+		copyOnDefined(json)(affordance)(
+			"name",
+			"enabled",
+			"lineWidthFactor",
+			"lineSegments",
+			"range",
+			"colorOverride"
+		)
 
 		return affordance;
 	}
@@ -46,6 +50,11 @@ export class LineAffordanceViewModel extends AffordanceViewModel
 	})
 	range = 1;
 
+	@editorProperty("Custom Color", () => ColorEditorComponent, [{
+		provide: PEColorOptions, useValue: <ColorEditorOptions>{ nullable: true }
+	}], { tooltip: "Overrides the default cyan color of the lines." })
+	colorOverride: string | null = null;
+
 	constructor(project: ProjectViewModel)
 	{
 		super(project);
@@ -60,11 +69,12 @@ export class LineAffordanceViewModel extends AffordanceViewModel
 		const withAlpha = (color: string, a: number) =>
 			colorutil.color({ ...colorutil.color(color).rgb, a: a }).rgb;
 
+		const color = this.colorOverride == null ? metadata.colors.secondary : this.colorOverride;
 		const gradient = colorutil.rgb.gradient({
 			width: 1,
 			colors: [
-				{ x: 0, ...withAlpha(metadata.colors.secondary, 128) },
-				{ x: this.range, ...withAlpha(metadata.colors.secondary, 0) },
+				{ x: 0, ...withAlpha(color, 128) },
+				{ x: this.range, ...withAlpha(color, 0) },
 			],
 		});
 
@@ -152,4 +162,8 @@ export class LineAffordanceViewModel extends AffordanceViewModel
 	}
 }
 
-addToJSON(LineAffordanceViewModel.prototype, "type", "name", "enabled", "lineWidthFactor", "lineSegments", "range");
+addToJSON(LineAffordanceViewModel.prototype,
+	"type", "name", "enabled",
+	"lineWidthFactor", "lineSegments", "range",
+	"colorOverride"
+);

@@ -1,0 +1,11 @@
+node_modules
+.vscode
+.vscode/**
+
+app/resources/**
+
+server/server.js
+app/bundle.js
+app/styles.css
+
+cvr.db*

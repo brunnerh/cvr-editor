@@ -1,25 +1,29 @@
 import { AffordanceViewModel, AffordanceLayers, AffordanceMetadata } from "./affordance-view-model";
 import { ButtonViewModel } from "../button-view-model";
-import { TextDisplayComponent, NumberEditorComponent, BooleanEditorComponent } from "../../../../components/editor/property-editors";
+import { TextDisplayComponent, NumberEditorComponent, BooleanEditorComponent, ColorEditorComponent, PEColorOptions, ColorEditorOptions } from "../../../../components/editor/property-editors";
 import { editorProperty } from "../../../../components/editor/properties.component";
 import { addToJSON } from "../../../utility/json";
 import { ProjectViewModel } from "../project-view-model";
 import { uvToLatLon, toVector3 } from "../../../utility/geometry";
 import config from "../../../../../config";
+import { copyOnDefined } from "../../../utility/object-utilities";
 
 export class EdgeIndicatorAffordanceViewModel extends AffordanceViewModel
 {
 	static deserialize(json: EdgeIndicatorAffordanceViewModel, project: ProjectViewModel): EdgeIndicatorAffordanceViewModel
 	{
 		const affordance = new EdgeIndicatorAffordanceViewModel(project);
-		affordance.name = json.name;
-		affordance.enabled = json.enabled;
-		affordance.radiusFactor = json.radiusFactor;
-		affordance.radiusDynamicityFactor = json.radiusDynamicityFactor;
-		affordance.opacityMax = json.opacityMax;
-		affordance.opacityMin = json.opacityMin;
-		affordance.traceSegments = json.traceSegments;
-		affordance.traceDraw = json.traceDraw;
+		copyOnDefined(json)(affordance)(
+			"name",
+			"enabled",
+			"radiusFactor",
+			"radiusDynamicityFactor",
+			"opacityMax",
+			"opacityMin",
+			"traceSegments",
+			"traceDraw",
+			"colorOverride"
+		);
 
 		return affordance;
 	}
@@ -62,6 +66,11 @@ export class EdgeIndicatorAffordanceViewModel extends AffordanceViewModel
 		tooltip: "Whether to draw the trace line."
 	})
 	traceDraw = false;
+	
+	@editorProperty("Custom Color", () => ColorEditorComponent, [{
+		provide: PEColorOptions, useValue: <ColorEditorOptions>{ nullable: true }
+	}], { tooltip: "Overrides the default cyan color of the indicators."})
+	colorOverride: string | null = null;
 
 	constructor(project: ProjectViewModel)
 	{
@@ -76,6 +85,7 @@ export class EdgeIndicatorAffordanceViewModel extends AffordanceViewModel
 		const perspectiveFrustum = this.makeFrustum(metadata.cameras.perspective);
 
 		const cursorLatLon = uvToLatLon(metadata.cursor);
+		const color = this.colorOverride == null ? metadata.colors.secondary : this.colorOverride;
 		currentButtons.forEach(data =>
 		{
 			const btnCenter = data.button.getCenter(metadata.currentTime);
@@ -134,7 +144,7 @@ export class EdgeIndicatorAffordanceViewModel extends AffordanceViewModel
 
 				ctx.beginPath();
 				ctx.arc(position.x, position.y, radius, 0, Math.PI * 2)
-				ctx.fillStyle = metadata.colors.secondary + this.hexString(opacity);
+				ctx.fillStyle = color + this.hexString(opacity);
 				ctx.fill();
 			});
 		});
@@ -143,5 +153,7 @@ export class EdgeIndicatorAffordanceViewModel extends AffordanceViewModel
 
 addToJSON(
 	EdgeIndicatorAffordanceViewModel.prototype,
-	"type", "name", "enabled", "radiusFactor", "radiusDynamicityFactor", "opacityMax", "opacityMin", "traceSegments", "traceDraw"
+	"type", "name", "enabled", "radiusFactor",
+	"radiusDynamicityFactor", "opacityMax", "opacityMin",
+	"traceSegments", "traceDraw", "colorOverride"
 );
